@@ -139,24 +139,15 @@ ggsave ("formacao.png", height = 6, width = 8)
 
 # Setores
 
-setores <- mapeamento %>% count(setor)%>%
-  mutate(setor= gsub(".* - ", "", setor),
-         setor=ifelse(setor== "Observatório de Indicadores Culturais (ObIC)", "ObIC", 
-                      setor))
+setores <- mapeamento %>% mutate(setor=ifelse(setor== "Outro", "Gerência de Comunicação (GCOM)", 
+                                              setor)) %>% 
+  count(setor)%>%
+  mutate(prop=scales::percent(n/sum(n))) %>% 
+  arrange(-n)
 
-ggplot(setores, aes(x = reorder(setor,n), y = n)) +
-  geom_segment(aes(xend=setor, yend = 0))+
-  geom_point(size=2,color="#623E3E") +
-  coord_flip()+
-  theme(panel.grid = element_blank(),
-        axis.title = element_text(face = "bold")) +
-  geom_text(aes(label = paste0(n, " (",
-                               scales::percent(n/sum(n)), ")")),
-            hjust = - 0.1, vjust=-.1) +
-  expand_limits(y = c(0, 50)) +
-  labs(y = "Colaboradores", x = "Setor")
+write.xlsx (setores, "setores_mapeamento.xlsx")
 
-ggsave ("setores_mapeamento.png", height = 6, width = 8)
+###### aqui 21/03#############################
 
 # Tempo de trabalho na Secult
 
